@@ -1,0 +1,9 @@
+name: BetterStatsStatistics
+version: '${project.version}'
+main: me.saif.betterstatsstatistics.Main
+api-version: 1.14
+depend: [BetterStats]
+softdepend: [Vault]
+prefix: "[BetterStatsStatistics]"
+authors: [saif]
+description: Addon with statistics for BetterStats

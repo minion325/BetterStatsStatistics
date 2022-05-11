@@ -1,0 +1,19 @@
+#Configure the look of /stats
+stats-command:
+  page-size: 5
+  header: '&7------====[&a%name%&7]====------'
+  entry: '&a%stat% &f- %value%'
+  footer: '&7------====[&aPage&8 %page%&7]====------'
+
+#Stats to the enabled/disabled
+stats:
+  blocks_broken: true
+  time_played: true
+  blocks_placed: true
+  deaths: true
+  players_killed: true
+  xp: true
+  xp_level: true
+  money: true
+  golden_apples_eaten: true
+  k/d_ratio: true
