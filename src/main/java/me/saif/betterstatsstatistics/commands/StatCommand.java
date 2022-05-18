@@ -17,12 +17,10 @@ import java.util.List;
 
 public class StatCommand {
 
-    private final Main plugin;
     private int pageLength;
     private final String header, footer, entry;
 
     public StatCommand(Main plugin) {
-        this.plugin = plugin;
         this.pageLength = plugin.getConfig().getInt("stats-command.page-size");
         this.header = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("stats-command.header", "&7------=====&a%name%&7=====------"));
         this.footer = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("stats-command.footer", "&7------=====&a%page%&7=====------"));

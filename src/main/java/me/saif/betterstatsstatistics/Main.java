@@ -1,13 +1,22 @@
 package me.saif.betterstatsstatistics;
 
 import me.saif.betterstats.BetterStats;
+import me.saif.betterstats.BetterStatsAPI;
 import me.saif.betterstats.statistics.Stat;
 import me.saif.betterstatsstatistics.commands.StatCommand;
 import me.saif.betterstatsstatistics.stats.*;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.AdvancedBarChart;
+import org.bstats.charts.MultiLineChart;
+import org.bstats.charts.SimpleBarChart;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
@@ -15,13 +24,12 @@ import revxrsal.commands.bukkit.core.BukkitHandler;
 import revxrsal.commands.command.ArgumentStack;
 import revxrsal.commands.process.ValueResolver;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
@@ -37,6 +45,26 @@ public class Main extends JavaPlugin {
 
         registerStats();
         hookVault();
+
+        Bukkit.getPluginManager().registerEvents(this,this);
+
+        Metrics metrics = new Metrics(this, 15218);
+        metrics.addCustomChart(new MultiLineChart("players_and_servers", () -> {
+            Map<String, Integer> valueMap = new HashMap<>();
+            valueMap.put("servers", 1);
+            valueMap.put("players", Bukkit.getOnlinePlayers().size());
+            return valueMap;
+        }));
+    }
+
+    @EventHandler
+    private void onPluginEnable(PluginEnableEvent event) {
+        if (event.getPlugin().getName().equals("BetterStats")) {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+                registerStats();
+                hookVault();
+            },1L);
+        }
     }
 
     private void registerStats() {
@@ -56,6 +84,10 @@ public class Main extends JavaPlugin {
         Set<Stat> toReturn = new HashSet<>();
 
         for (Stat stat : possible) {
+            if (getConfig().get("stats." + stat.getInternalName()) == null) {
+                getConfig().set("stats." + stat.getInternalName(), true);
+                saveConfig();
+            }
             if (getConfig().getBoolean("stats." + stat.getInternalName()))
                 toReturn.add(stat);
         }
